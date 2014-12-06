@@ -78,6 +78,17 @@ public final class XletContextHolder {
     }
 
 
+    public XletContext get() {
+
+        synchronized (this) {
+            if (xletContext == null) {
+                throw new IllegalStateException("not set yet");
+            }
+            return xletContext;
+        }
+    }
+
+
     /**
      *
      * @param xletContext the xlet context to be set
@@ -99,17 +110,6 @@ public final class XletContextHolder {
                 throw new IllegalStateException("already set");
             }
             this.xletContext = xletContext;
-        }
-    }
-
-
-    public XletContext get() {
-
-        synchronized (this) {
-            if (xletContext == null) {
-                throw new IllegalStateException("not set yet");
-            }
-            return xletContext;
         }
     }
 
