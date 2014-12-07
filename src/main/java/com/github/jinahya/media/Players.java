@@ -30,7 +30,7 @@ import javax.tv.xlet.XletContext;
 
 /**
  *
- * @author Jin Kwon &ltjinahya at gmail.com&gt;
+ * @author Jin Kwon &lt;jinahya at gmail.com&gt;
  */
 public final class Players {
 
