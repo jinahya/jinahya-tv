@@ -26,12 +26,12 @@ import javax.tv.xlet.XletContext;
  * <blockquote><pre>
  * {@code
  * public void initXlet(final XletContext xletContext) {
- *     XletContextHolder.getInstance().set(xletContext);
+ *     XletContextHolder.set(xletContext);
  *     // other statements here
  * }
  * public void destroyXlet(final boolean unconditional) {
  *     // other statements here
- *     XletContextHolder.getInstance().set(null);
+ *     XletContextHolder.set(null);
  * }
  * }
  * </pre></blockquote>
@@ -39,8 +39,7 @@ import javax.tv.xlet.XletContext;
  * <blockquote></pre> null {@code
  * class SomeOther {
  *     public void doSomething() {
- *         final XletContext xletContext
- *             = XletContextHolder.getInstance().get();
+ *         final XletContext xletContext = XletContextHolder.get();
  *     }
  * }
  * }
@@ -51,41 +50,16 @@ import javax.tv.xlet.XletContext;
 public final class XletContextHolder {
 
 
-    private static volatile XletContextHolder INSTANCE;
+    private static volatile XletContext xletContext;
 
 
-    /**
-     *
-     * @return the instance.
-     */
-    public static XletContextHolder getInstance() {
+    public synchronized static XletContext get() {
 
-        if (INSTANCE == null) {
-            synchronized (XletContextHolder.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new XletContextHolder();
-                }
-            }
+        if (xletContext == null) {
+            throw new IllegalStateException("not set yet");
         }
 
-        return INSTANCE;
-    }
-
-
-    private XletContextHolder() {
-
-        super();
-    }
-
-
-    public XletContext get() {
-
-        synchronized (this) {
-            if (xletContext == null) {
-                throw new IllegalStateException("not set yet");
-            }
-            return xletContext;
-        }
+        return xletContext;
     }
 
 
@@ -93,28 +67,31 @@ public final class XletContextHolder {
      *
      * @param xletContext the xlet context to be set
      */
-    public void set(final XletContext xletContext) {
+    public static void set(final XletContext xletContext) {
 
         if (xletContext == null) {
-            synchronized (this) {
-                if (this.xletContext != null) {
-                    this.xletContext = null;
+            synchronized (XletContextHolder.class) {
+                if (XletContextHolder.xletContext != null) {
+                    XletContextHolder.xletContext = null;
                     return;
                 }
             }
             throw new NullPointerException("null xletContext");
         }
 
-        synchronized (this) {
-            if (this.xletContext != null) {
+        synchronized (XletContextHolder.class) {
+            if (XletContextHolder.xletContext != null) {
                 throw new IllegalStateException("already set");
             }
-            this.xletContext = xletContext;
+            XletContextHolder.xletContext = xletContext;
         }
     }
 
 
-    private volatile XletContext xletContext;
+    private XletContextHolder() {
+
+        super();
+    }
 
 
 }

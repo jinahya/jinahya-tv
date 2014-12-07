@@ -15,16 +15,16 @@
  */
 
 
-package com.github.jinahya.media;
+package com.github.jinahya.tv.service.selection;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.media.Player;
 import javax.tv.service.selection.ServiceContentHandler;
 import javax.tv.service.selection.ServiceContext;
 import javax.tv.service.selection.ServiceContextException;
 import javax.tv.service.selection.ServiceContextFactory;
+import javax.tv.service.selection.ServiceMediaHandler;
 import javax.tv.xlet.XletContext;
 
 
@@ -32,16 +32,17 @@ import javax.tv.xlet.XletContext;
  *
  * @author Jin Kwon &ltjinahya at gmail.com&gt;
  */
-public final class Players {
+public final class ServiceMediaHandlers {
 
 
     /**
      * Returns a list of {@link ServiceContentHandler}s related to given
-     * {@code xletContext} which each is an instance of {@link Player}.
+     * {@code xletContext} which each is an instance of
+     * {@link ServiceMediaHandler}.
      *
      * @param xletContext the xlet context
      * @return a list of {@link ServiceContentHandler}s which each is an
-     * instance of {@link Player}.
+     * instance of {@link ServiceMediaHandler}.
      * @throws ServiceContextException
      * @see ServiceContextFactory#getInstance()
      */
@@ -54,14 +55,14 @@ public final class Players {
 
         final List list = new ArrayList();
 
-        final ServiceContextFactory serviceContextFactory
+        final ServiceContextFactory serviceContxtFactory
             = ServiceContextFactory.getInstance();
         final ServiceContext serviceContext
-            = serviceContextFactory.getServiceContext(xletContext);
+            = serviceContxtFactory.getServiceContext(xletContext);
         final ServiceContentHandler[] serviceContentHandlers
             = serviceContext.getServiceContentHandlers();
         for (int i = 0; i < serviceContentHandlers.length; i++) {
-            if (serviceContentHandlers[i] instanceof Player) {
+            if (serviceContentHandlers[i] instanceof ServiceMediaHandler) {
                 list.add(serviceContentHandlers[i]);
             }
         }
@@ -83,7 +84,7 @@ public final class Players {
         final ServiceContentHandler[] handlers
             = context.getServiceContentHandlers();
         for (int i = 0; i < handlers.length; i++) {
-            if (handlers[i] instanceof Player) {
+            if (handlers[i] instanceof ServiceMediaHandler) {
                 list.add(handlers[i]);
             }
         }
@@ -99,22 +100,22 @@ public final class Players {
 
 
     public static List get(final ServiceContextFactory factory,
-                           final List list) {
+                           final List serviceMediaHandlers) {
 
         if (factory == null) {
             throw new NullPointerException("null factory");
         }
 
-        if (list == null) {
-            throw new NullPointerException("null list");
+        if (serviceMediaHandlers == null) {
+            throw new NullPointerException("null serviceMediaHandlers");
         }
 
         final ServiceContext[] contexts = factory.getServiceContexts();
         for (int i = 0; i < contexts.length; i++) {
-            get(contexts[i], list);
+            get(contexts[i], serviceMediaHandlers);
         }
 
-        return list;
+        return serviceMediaHandlers;
     }
 
 
@@ -134,7 +135,7 @@ public final class Players {
     }
 
 
-    private Players() {
+    private ServiceMediaHandlers() {
 
         super();
     }
