@@ -19,7 +19,6 @@ package com.github.jinahya.tv.service.selection;
 
 
 import java.util.Collection;
-import java.util.List;
 import javax.tv.service.selection.ServiceContentHandler;
 import javax.tv.service.selection.ServiceContext;
 
@@ -32,6 +31,15 @@ public final class ServiceContexts {
 
 
     public static interface HandlerPredicate {
+
+
+        boolean test(ServiceContentHandler handler);
+
+
+    }
+
+
+    public static final class HandlerPredicates {
 
 
         public static final HandlerPredicate TRUE = new HandlerPredicate() {
@@ -58,13 +66,108 @@ public final class ServiceContexts {
         };
 
 
-        boolean test(ServiceContentHandler handler);
+        public static HandlerPredicate anyOf(final Class[] types) {
+            return new HandlerPredicate() {
+
+
+                public boolean test(final ServiceContentHandler handler) {
+
+                    for (int i = 0; i < types.length; i++) {
+                        if (types[i].isInstance(handler)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+
+            };
+        }
+
+
+        public static HandlerPredicate anyOf(final Class firstType) {
+
+            return anyOf(new Class[]{firstType});
+        }
+
+
+        public static HandlerPredicate anyOf(final Class firstType,
+                                             final Class secondType) {
+
+            return anyOf(new Class[]{firstType, secondType});
+        }
+
+
+        public static HandlerPredicate anyOf(final Class firstType,
+                                             final Class secondType,
+                                             final Class thirdType) {
+
+            return anyOf(new Class[]{firstType, secondType, thirdType});
+        }
+
+
+        public static HandlerPredicate allOf(final Class[] types) {
+
+            return new HandlerPredicate() {
+
+
+                public boolean test(final ServiceContentHandler handler) {
+
+                    for (int i = 0; i < types.length; i++) {
+                        if (!types[i].isInstance(handler)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+
+            };
+        }
+
+
+        public static HandlerPredicate allOf(final Class firstType) {
+
+            return allOf(new Class[]{firstType});
+        }
+
+
+        public static HandlerPredicate allOf(final Class firstType,
+                                             final Class secondType) {
+
+            return allOf(new Class[]{firstType, secondType});
+        }
+
+
+        public static HandlerPredicate allOf(final Class firstType,
+                                             final Class secondType,
+                                             final Class thirdType) {
+
+            return allOf(new Class[]{firstType, secondType, thirdType});
+        }
+
+
+        private HandlerPredicates() {
+
+            super();
+        }
 
 
     }
 
 
     public static interface HandlerConsumer {
+
+
+        void accept(ServiceContentHandler handler);
+
+
+    }
+
+
+    public static final class HandlerConsumers {
 
 
         public static final HandlerConsumer EMPTY = new HandlerConsumer() {
@@ -77,30 +180,25 @@ public final class ServiceContexts {
         };
 
 
-        void accept(ServiceContentHandler handler);
+        public static HandlerConsumer collecting(final Collection collection) {
+
+            return new HandlerConsumer() {
 
 
-    }
+                public void accept(final ServiceContentHandler handler) {
+
+                    collection.add(handler);
+                }
 
 
-    public static class HandlerCollector implements HandlerConsumer {
+            };
+        }
 
 
-        public HandlerCollector(final Collection collection) {
+        private HandlerConsumers() {
 
             super();
-
-            this.collection = collection;
         }
-
-
-        public void accept(final ServiceContentHandler handler) {
-
-            collection.add(handler);
-        }
-
-
-        private final Collection collection;
 
 
     }
@@ -108,7 +206,7 @@ public final class ServiceContexts {
 
     public static void handlers(final ServiceContext context,
                                 final HandlerPredicate predicate,
-                                final HandlerConsumer operator) {
+                                final HandlerConsumer consumer) {
 
         if (context == null) {
             throw new NullPointerException("null context");
@@ -118,41 +216,19 @@ public final class ServiceContexts {
             = context.getServiceContentHandlers();
         for (int i = 0; i < handlers.length; i++) {
             if (predicate.test(handlers[i])) {
-                operator.accept(handlers[i]);
+                consumer.accept(handlers[i]);
             }
         }
     }
 
 
-    public static List handlers(final ServiceContext context,
-                                final HandlerPredicate predicate,
-                                final List list) {
+    public static void handlers(final ServiceContext context,
+                                final HandlerConsumer consumer) {
 
-        handlers(context, predicate, new HandlerCollector(list));
-
-        return list;
+        handlers(context, HandlerPredicates.TRUE, consumer);
     }
 
 
-//    public static List handlers(final ServiceContextFactory factory,
-//                                final HandlerPredicate predicate,
-//                                final List list) {
-//
-//        if (factory == null) {
-//            throw new NullPointerException("null factory");
-//        }
-//
-//        if (list == null) {
-//            throw new NullPointerException("null list");
-//        }
-//
-//        final ServiceContext[] contexts = factory.getServiceContexts();
-//        for (int i = 0; i < contexts.length; i++) {
-//            handlers(contexts[i], predicate, list);
-//        }
-//
-//        return list;
-//    }
     private ServiceContexts() {
 
         super();

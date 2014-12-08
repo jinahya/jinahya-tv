@@ -19,7 +19,6 @@ package com.github.jinahya.tv.service.selection;
 
 
 import java.util.Collection;
-import java.util.List;
 import javax.tv.service.selection.ServiceContext;
 import javax.tv.service.selection.ServiceContextFactory;
 
@@ -32,6 +31,15 @@ public final class ServiceContextFactories {
 
 
     public static interface ContextPredicate {
+
+
+        boolean test(ServiceContext context);
+
+
+    }
+
+
+    public static final class ContextPredicates {
 
 
         public static final ContextPredicate TRUE = new ContextPredicate() {
@@ -58,7 +66,10 @@ public final class ServiceContextFactories {
         };
 
 
-        boolean test(ServiceContext context);
+        private ContextPredicates() {
+
+            super();
+        }
 
 
     }
@@ -67,40 +78,44 @@ public final class ServiceContextFactories {
     public static interface ContextConsumer {
 
 
-        public static final ContextConsumer EMPTY = new ContextConsumer() {
-
-
-            public void accept(final ServiceContext context) {
-            }
-
-
-        };
-
-
         void accept(ServiceContext context);
 
 
     }
 
 
-    public static class ContextCollector implements ContextConsumer {
+    public static final class ContextConsumers {
 
 
-        public ContextCollector(final Collection collection) {
+        public static final ContextConsumer EMPTY = new ContextConsumer() {
+
+
+            public void accept(final ServiceContext context) {
+
+            }
+
+
+        };
+
+
+        public static ContextConsumer collecting(final Collection collection) {
+
+            return new ContextConsumer() {
+
+
+                public void accept(ServiceContext context) {
+                    collection.add(context);
+                }
+
+
+            };
+        }
+
+
+        private ContextConsumers() {
 
             super();
-
-            this.collection = collection;
         }
-
-
-        public void accept(final ServiceContext context) {
-
-            collection.add(context);
-        }
-
-
-        private final Collection collection;
 
 
     }
@@ -108,24 +123,21 @@ public final class ServiceContextFactories {
 
     public static void contexts(final ServiceContextFactory factory,
                                 final ContextPredicate predicate,
-                                final ContextConsumer operator) {
+                                final ContextConsumer consumer) {
 
         final ServiceContext[] contexts = factory.getServiceContexts();
         for (int i = 0; i < contexts.length; i++) {
             if (predicate.test(contexts[i])) {
-                operator.accept(contexts[i]);
+                consumer.accept(contexts[i]);
             }
         }
     }
 
 
-    public static List contexts(final ServiceContextFactory factory,
-                                final ContextPredicate predicate,
-                                final List list) {
+    public static void contexts(final ServiceContextFactory factory,
+                                final ContextConsumer consumer) {
 
-        contexts(factory, predicate, new ContextCollector(list));
-
-        return list;
+        contexts(factory, ContextPredicates.TRUE, consumer);
     }
 
 
