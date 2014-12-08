@@ -22,7 +22,7 @@ import javax.tv.xlet.XletContext;
 
 
 /**
- *
+ * <p>
  * <blockquote><pre>
  * {@code
  * public void initXlet(final XletContext xletContext) {
@@ -35,15 +35,18 @@ import javax.tv.xlet.XletContext;
  * }
  * }
  * </pre></blockquote>
+ * </p>
  * <p>
- * <blockquote></pre> null {@code
+ * <blockquote><pre>
+ * {@code
  * class SomeOther {
  *     public void doSomething() {
  *         final XletContext xletContext = XletContextHolder.get();
  *     }
  * }
  * }
- * </pre></blockquote></p>
+ * </pre></blockquote>
+ * </p>
  *
  * @author Jin Kwon &ltjinahya at gmail.com&gt;
  */

@@ -41,8 +41,10 @@ public final class ServiceMediaHandlers {
      * {@link ServiceMediaHandler}.
      *
      * @param xletContext the xlet context
+     *
      * @return a list of {@link ServiceContentHandler}s which each is an
      * instance of {@link ServiceMediaHandler}.
+     *
      * @throws ServiceContextException
      * @see ServiceContextFactory#getInstance()
      */
@@ -93,42 +95,65 @@ public final class ServiceMediaHandlers {
     }
 
 
+    /**
+     *
+     * @param context the service context whose service content handlers are
+     * filtered.
+     *
+     * @return
+     *
+     * @see #get(javax.tv.service.selection.ServiceContext, java.util.List)
+     */
     public static List get(final ServiceContext context) {
 
         return get(context, new ArrayList());
     }
 
 
+    /**
+     *
+     * @param factory
+     * @param list
+     *
+     * @return
+     *
+     * @see #get(javax.tv.service.selection.ServiceContext, java.util.List)
+     */
     public static List get(final ServiceContextFactory factory,
-                           final List serviceMediaHandlers) {
+                           final List list) {
 
         if (factory == null) {
             throw new NullPointerException("null factory");
-        }
-
-        if (serviceMediaHandlers == null) {
-            throw new NullPointerException("null serviceMediaHandlers");
         }
 
         final ServiceContext[] contexts = factory.getServiceContexts();
         for (int i = 0; i < contexts.length; i++) {
-            get(contexts[i], serviceMediaHandlers);
+            get(contexts[i], list);
         }
 
-        return serviceMediaHandlers;
+        return list;
     }
 
 
+    /**
+     *
+     * @param factory
+     *
+     * @return
+     *
+     * @see #get(javax.tv.service.selection.ServiceContextFactory,
+     * java.util.List)
+     */
     public static List get(final ServiceContextFactory factory) {
-
-        if (factory == null) {
-            throw new NullPointerException("null factory");
-        }
 
         return get(factory, new ArrayList());
     }
 
 
+    /**
+     *
+     * @return @see #get(javax.tv.service.selection.ServiceContextFactory)
+     */
     public static List get() {
 
         return get(ServiceContextFactory.getInstance());
