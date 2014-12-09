@@ -30,18 +30,34 @@ import javax.tv.service.selection.ServiceContext;
 public final class ServiceContexts {
 
 
+    /**
+     * An interface for testing instances of {@link ServiceContentHandler}.
+     */
     public static interface HandlerPredicate {
 
 
+        /**
+         * Tests specified {@code handler}.
+         *
+         * @param handler the handler to test
+         *
+         * @return {@code true} if acceptable, {@code false} otherwise.
+         */
         boolean test(ServiceContentHandler handler);
 
 
     }
 
 
+    /**
+     * A utility class for {@link HandlerPredicate}.
+     */
     public static final class HandlerPredicates {
 
 
+        /**
+         * A predefined constant accepts all.
+         */
         public static final HandlerPredicate TRUE = new HandlerPredicate() {
 
 
@@ -54,6 +70,9 @@ public final class ServiceContexts {
         };
 
 
+        /**
+         * A predefined constant accepts none.
+         */
         public static final HandlerPredicate FALSE = new HandlerPredicate() {
 
 
@@ -66,86 +85,124 @@ public final class ServiceContexts {
         };
 
 
-        public static HandlerPredicate anyOf(final Class[] types) {
-            return new HandlerPredicate() {
+        private static class InstanceOfAny implements HandlerPredicate {
 
 
-                public boolean test(final ServiceContentHandler handler) {
+            public InstanceOfAny(final Class[] types) {
 
-                    for (int i = 0; i < types.length; i++) {
-                        if (types[i].isInstance(handler)) {
-                            return true;
-                        }
+                super();
+
+                this.types = types;
+            }
+
+
+            public boolean test(final ServiceContentHandler handler) {
+
+                for (int i = 0; i < types.length; i++) {
+                    if (types[i].isInstance(handler)) {
+                        return true;
                     }
-
-                    return false;
                 }
 
+                return false;
+            }
 
-            };
+
+            private final Class[] types;
+
+
         }
 
 
-        public static HandlerPredicate anyOf(final Class firstType) {
+        /**
+         * Creates a new predicate which tests whether a
+         * {@link ServiceContentHandler} is instance of any given {@code types}.
+         *
+         * @param types the type to check
+         *
+         * @return true if given {@link ServiceContentHandler} is instance of
+         * any given {@code types}; {@code false} otherwise.
+         */
+        public static HandlerPredicate instanceOfAny(final Class[] types) {
 
-            return anyOf(new Class[]{firstType});
+            return new InstanceOfAny(types);
         }
 
 
-        public static HandlerPredicate anyOf(final Class firstType,
-                                             final Class secondType) {
+        public static HandlerPredicate instanceOfAny(final Class firstType) {
 
-            return anyOf(new Class[]{firstType, secondType});
+            return instanceOfAny(new Class[]{firstType});
         }
 
 
-        public static HandlerPredicate anyOf(final Class firstType,
-                                             final Class secondType,
-                                             final Class thirdType) {
+        public static HandlerPredicate instanceOfAny(final Class firstType,
+                                                     final Class secondType) {
 
-            return anyOf(new Class[]{firstType, secondType, thirdType});
+            return instanceOfAny(new Class[]{firstType, secondType});
         }
 
 
-        public static HandlerPredicate allOf(final Class[] types) {
+        public static HandlerPredicate instanceOfAny(final Class firstType,
+                                                     final Class secondType,
+                                                     final Class thirdType) {
 
-            return new HandlerPredicate() {
+            return instanceOfAny(new Class[]{firstType, secondType, thirdType});
+        }
 
 
-                public boolean test(final ServiceContentHandler handler) {
+        public static class InstanceOfAll implements HandlerPredicate {
 
-                    for (int i = 0; i < types.length; i++) {
-                        if (!types[i].isInstance(handler)) {
-                            return false;
-                        }
+
+            public InstanceOfAll(final Class[] types) {
+
+                super();
+
+                this.types = types;
+            }
+
+
+            public boolean test(final ServiceContentHandler handler) {
+
+                for (int i = 0; i < types.length; i++) {
+                    if (!types[i].isInstance(handler)) {
+                        return false;
                     }
-
-                    return true;
                 }
 
+                return true;
+            }
 
-            };
+
+            private final Class[] types;
+
+
         }
 
 
-        public static HandlerPredicate allOf(final Class firstType) {
+        public static HandlerPredicate instanceOfAll(final Class[] types) {
 
-            return allOf(new Class[]{firstType});
+            return new InstanceOfAll(types);
         }
 
 
-        public static HandlerPredicate allOf(final Class firstType,
-                                             final Class secondType) {
+        public static HandlerPredicate instanceOfAll(final Class firstType) {
 
-            return allOf(new Class[]{firstType, secondType});
+            return instanceOfAll(new Class[]{firstType});
         }
 
 
-        public static HandlerPredicate allOf(final Class firstType,
-                                             final Class secondType,
-                                             final Class thirdType) {
+        public static HandlerPredicate instanceOfAll(final Class firstType,
+                                                     final Class secondType) {
 
-            return allOf(new Class[]{firstType, secondType, thirdType});
+            return instanceOfAll(new Class[]{firstType, secondType});
+        }
+
+
+        public static HandlerPredicate instanceOfAll(final Class firstType,
+                                                     final Class secondType,
+                                                     final Class thirdType) {
+
+            return instanceOfAll(new Class[]{firstType, secondType, thirdType});
         }
 
 
@@ -158,18 +215,32 @@ public final class ServiceContexts {
     }
 
 
+    /**
+     * An interface for consuming instances of {@link ServiceContentHandler}.
+     */
     public static interface HandlerConsumer {
 
 
+        /**
+         * Consumes given handler.
+         *
+         * @param handler the handler to consume
+         */
         void accept(ServiceContentHandler handler);
 
 
     }
 
 
+    /**
+     * A utility class for consumers.
+     */
     public static final class HandlerConsumers {
 
 
+        /**
+         * A consumer doesn't consumes.
+         */
         public static final HandlerConsumer EMPTY = new HandlerConsumer() {
 
 
@@ -180,18 +251,39 @@ public final class ServiceContexts {
         };
 
 
+        private static class HandlerCollector implements HandlerConsumer {
+
+
+            public HandlerCollector(final Collection collection) {
+
+                super();
+
+                this.collection = collection;
+            }
+
+
+            public void accept(final ServiceContentHandler handler) {
+
+                collection.add(handler);
+            }
+
+
+            private final Collection collection;
+
+
+        }
+
+
+        /**
+         * A consumer collecting handlers to a specified collection.
+         *
+         * @param collection the collection to which handlers added
+         *
+         * @return a consumer
+         */
         public static HandlerConsumer collecting(final Collection collection) {
 
-            return new HandlerConsumer() {
-
-
-                public void accept(final ServiceContentHandler handler) {
-
-                    collection.add(handler);
-                }
-
-
-            };
+            return new HandlerCollector(collection);
         }
 
 
@@ -204,6 +296,18 @@ public final class ServiceContexts {
     }
 
 
+    /**
+     * Tests and consumes {@link ServiceContentHandler} instances of a
+     * {@link ServiceContext}.
+     *
+     * @param context the context whose
+     * {@link ServiceContext#getServiceContentHandlers()} are tested and
+     * consumed.
+     * @param predicate the tester
+     * @param consumer the consumer
+     *
+     * @see ServiceContext#getServiceContentHandlers()
+     */
     public static void handlers(final ServiceContext context,
                                 final HandlerPredicate predicate,
                                 final HandlerConsumer consumer) {
@@ -226,6 +330,22 @@ public final class ServiceContexts {
                                 final HandlerConsumer consumer) {
 
         handlers(context, HandlerPredicates.TRUE, consumer);
+    }
+
+
+    /**
+     *
+     * @param context
+     * @param collection
+     *
+     * @return given {@code collection}.
+     */
+    public static Collection handlers(final ServiceContext context,
+                                      final Collection collection) {
+
+        handlers(context, HandlerConsumers.collecting(collection));
+
+        return collection;
     }
 
 

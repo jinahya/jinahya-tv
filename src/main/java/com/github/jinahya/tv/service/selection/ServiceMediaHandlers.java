@@ -41,7 +41,7 @@ public final class ServiceMediaHandlers {
 
         ServiceContexts.handlers(
             ServiceContextFactory.getInstance().getServiceContext(xletContext),
-            ServiceContexts.HandlerPredicates.anyOf(
+            ServiceContexts.HandlerPredicates.instanceOfAny(
                 new Class[]{ServiceMediaHandler.class}),
             ServiceContexts.HandlerConsumers.collecting(list));
 
