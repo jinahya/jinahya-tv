@@ -18,21 +18,29 @@
 package com.github.jinahya.media;
 
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import javax.media.Controller;
-import javax.tv.media.AWTVideoSize;
-import javax.tv.media.AWTVideoSizeControl;
-import org.dvb.media.BackgroundVideoPresentationControl;
 
 
 /**
+ * A utility class for {@link Controller}.
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
 public class Controllers {
 
 
+    /**
+     * Finds the control of given {@code type} from specified
+     * {@code controller}.
+     *
+     * @param <T> control type parameter
+     * @param controller the controller.
+     * @param type the control type.
+     *
+     * @return found control or {@code null} if not found.
+     *
+     * @see Controller#getControl(java.lang.String)
+     */
     public static <T> T getControl(final Controller controller,
                                    final Class<T> type) {
 
@@ -45,77 +53,6 @@ public class Controllers {
         }
 
         return type.cast(controller.getControl(type.getName()));
-
-    }
-
-
-    public void resizeDvb(final Controller controller, final int width,
-                          final int height) {
-
-        if (controller == null) {
-            throw new NullPointerException("null controller");
-        }
-
-//        final BackgroundVideoPresentationControl control
-//            = (BackgroundVideoPresentationControl) controller.getControl(
-//                BackgroundVideoPresentationControl.class.getName());
-        final BackgroundVideoPresentationControl control
-            = getControl(controller, BackgroundVideoPresentationControl.class);
-    }
-
-
-    /**
-     *
-     * @param controller
-     *
-     * @return
-     *
-     * @see #getControl(javax.media.Controller, java.lang.Class)
-     */
-    public static AWTVideoSizeControl getAWTVideoSizeControl(
-        final Controller controller) {
-
-        if (controller == null) {
-            throw new NullPointerException("null controller");
-        }
-
-//        return (AWTVideoSizeControl) controller.getControl(
-//            AWTVideoSizeControl.class.getName());
-        return getControl(controller, AWTVideoSizeControl.class);
-    }
-
-
-    public boolean setSize(final Controller controller,
-                           final Rectangle destination) {
-
-        if (controller == null) {
-            throw new NullPointerException("null controller");
-        }
-
-//        final AWTVideoSizeControl control
-//            = (AWTVideoSizeControl) controller.getControl(
-//                AWTVideoSizeControl.class.getName());
-//        final AWTVideoSizeControl control
-//            = getControl(controller, AWTVideoSizeControl.class);
-        final AWTVideoSizeControl control = getAWTVideoSizeControl(controller);
-        final Rectangle source = new Rectangle(control.getSourceVideoSize());
-        final AWTVideoSize desired = new AWTVideoSize(source, destination);
-        final AWTVideoSize checked = control.checkSize(desired);
-
-        return control.setSize(checked);
-    }
-
-
-    public boolean setSize(final Controller controller, final Dimension size) {
-
-        return setSize(controller, new Rectangle(size));
-    }
-
-
-    public boolean setSize(final Controller controller, final int width,
-                           final int height) {
-
-        return setSize(controller, new Dimension(width, height));
     }
 
 

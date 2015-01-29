@@ -32,6 +32,16 @@ import javax.tv.media.AWTVideoSizeControl;
 public class AWTVideoSizeControls {
 
 
+    /**
+     * Finds the {@link AWTVideoSizeControl} instance within given
+     * {@code control}.
+     *
+     * @param controller the controller.
+     *
+     * @return the found control or {@code null} if not found.
+     *
+     * @see Controllers#getControl(javax.media.Controller, java.lang.Class)
+     */
     public static AWTVideoSizeControl get(final Controller controller) {
 
         return Controllers.getControl(controller, AWTVideoSizeControl.class);

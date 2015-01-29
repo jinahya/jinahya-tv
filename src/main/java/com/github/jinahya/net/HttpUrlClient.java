@@ -22,7 +22,7 @@ package com.github.jinahya.net;
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
-public class HttpUrlClient {
+public class HttpRequest {
 
 }
 

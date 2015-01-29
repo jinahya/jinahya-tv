@@ -22,16 +22,21 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.github.jinahya</groupId>
+      <artifactId>jinahya-pbp</artifactId>
+      <version>0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>com.googlecode.jinahya</groupId>
       <artifactId>ocap-api</artifactId>
       <version>1.3.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-      <version>4.0-beta4</version>
-      <scope>test</scope>
+      <groupId>net.sf.microlog</groupId>
+      <artifactId>microlog-logger-core</artifactId>
+      <version>2.3.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -160,7 +165,7 @@
                                  destdir="${project.build.outputDirectory}"
                                  target="1.3" smart="true" stripannot="true"
                                  stripsign="true" failonwarning="true"
-                                 embed="com.github.jinahya.tv.retrotranslator">
+                                 embed="com.github.jinahya.retrotranslator13">
                   <classpath>
                     <fileset dir="${basedir}/lib" includes="**/*.jar"/>
                   </classpath>

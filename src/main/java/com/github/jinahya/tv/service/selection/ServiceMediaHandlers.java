@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jin Kwon &ltjinahya at gmail.com&gt;.
+ * Copyright 2014 Jin Kwon &lt;jinahya_at_gmail.com&gt;.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,34 +18,34 @@
 package com.github.jinahya.tv.service.selection;
 
 
-import java.util.List;
+import java.util.Collection;
+import javax.tv.service.selection.ServiceContext;
 import javax.tv.service.selection.ServiceContextException;
-import javax.tv.service.selection.ServiceContextFactory;
 import javax.tv.service.selection.ServiceMediaHandler;
 import javax.tv.xlet.XletContext;
 
 
 /**
  *
- * @author Jin Kwon &lt;jinahya at gmail.com&gt;
+ * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
 public final class ServiceMediaHandlers {
 
 
-    public static List list(final XletContext xletContext, final List list)
+    public static <T extends ServiceMediaHandler> Collection<? super T> collect(
+        final ServiceContext context, final Class<T> type,
+        final Collection<? super T> collection, final int limit) {
+
+        return ServiceContentHandlers.collect(context, type, collection, limit);
+    }
+
+
+    public static <T extends ServiceMediaHandler> Collection<? super T> collect(
+        final XletContext context, final Class<T> type,
+        final Collection<? super T> collection, final int limit)
         throws ServiceContextException {
 
-        if (xletContext == null) {
-            throw new NullPointerException("null xletContext");
-        }
-
-        ServiceContexts.handlers(
-            ServiceContextFactory.getInstance().getServiceContext(xletContext),
-            ServiceContexts.HandlerPredicates.instanceOfAny(
-                new Class[]{ServiceMediaHandler.class}),
-            ServiceContexts.HandlerConsumers.collecting(list));
-
-        return list;
+        return ServiceContentHandlers.collect(context, type, collection, limit);
     }
 
 
