@@ -18,12 +18,11 @@
 package com.github.jinahya.tv.service.selection;
 
 
-import java.util.Collection;
+import com.github.jinahya.util.function.Consumer;
+import com.github.jinahya.util.function.Function;
+import com.github.jinahya.util.function.Predicate;
 import javax.tv.service.selection.ServiceContentHandler;
 import javax.tv.service.selection.ServiceContext;
-import javax.tv.service.selection.ServiceContextException;
-import javax.tv.service.selection.ServiceContextFactory;
-import javax.tv.xlet.XletContext;
 
 
 /**
@@ -33,86 +32,22 @@ import javax.tv.xlet.XletContext;
 public final class ServiceContentHandlers {
 
 
-//    /**
-//     * Tests and consumes the result of
-//     * {@link ServiceContext#getServiceContentHandlers()}.
-//     *
-//     * @param <R>
-//     * @param context the context whose handlers are processed.
-//     * @param predicate the predicate to test ServiceContentHandler instance
-//     * before accept to {@code consumer}. {@code null} allowed.
-//     * @param function
-//     * @param consumer the consumer which accepts {@link ServiceContentHandler}.
-//     * @param limit
-//     *
-//     * @see ServiceContext#getServiceContentHandlers()
-//     */
-//    public static <R> void list(
-//        final ServiceContext context,
-//        final Predicate<ServiceContentHandler> predicate,
-//        final Function<ServiceContentHandler, R> function,
-//        final Consumer<R> consumer, final int limit) {
-//
-//        if (context == null) {
-//            throw new NullPointerException("null context");
-//        }
-//
-//        int count = 0;
-//        for (final ServiceContentHandler handler
-//             : context.getServiceContentHandlers()) {
-//            if (limit >= 0 && count == limit) {
-//                break;
-//            }
-//            if (predicate.test(handler)) {
-//                consumer.accept(function.apply(handler));
-//                count++;
-//            }
-//        }
-//    }
-    public static <T extends ServiceContentHandler> Collection<? super T> collect(
-        final ServiceContext context, final Class<T> type,
-        final Collection<? super T> collection, final int limit) {
+    public static <T> void supply(
+        final ServiceContext context,
+        final Predicate<? super ServiceContentHandler> predicate,
+        final Function<ServiceContentHandler, T> function,
+        final Consumer<? super T> consumer) {
 
         if (context == null) {
             throw new NullPointerException("null context");
         }
 
-        if (type == null) {
-            throw new NullPointerException("null type");
-        }
-
-        if (collection == null) {
-            throw new NullPointerException("null collection");
-        }
-
-        int count = 0;
         for (final ServiceContentHandler handler
              : context.getServiceContentHandlers()) {
-            if (limit >= 0 && count == limit) {
-                break;
-            }
-            if (type.isInstance(handler)) {
-                collection.add(type.cast(handler));
-                count++;
+            if (predicate.test(handler)) {
+                consumer.accept(function.apply(handler));
             }
         }
-
-        return collection;
-    }
-
-
-    public static <T extends ServiceContentHandler> Collection<? super T> collect(
-        final XletContext context, final Class<T> type,
-        final Collection<? super T> collection, final int limit)
-        throws ServiceContextException {
-
-        if (context == null) {
-            throw new NullPointerException("null context");
-        }
-
-        return collect(
-            ServiceContextFactory.getInstance().getServiceContext(context),
-            type, collection, limit);
     }
 
 

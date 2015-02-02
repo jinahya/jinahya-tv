@@ -18,15 +18,18 @@
 package com.github.jinahya.media;
 
 
-import com.github.jinahya.tv.service.selection.ServiceMediaHandlers;
-import java.util.Collection;
-import java.util.List;
+import com.github.jinahya.tv.service.selection.ServiceContentHandlers;
+import com.github.jinahya.util.function.Consumer;
+import com.github.jinahya.util.function.Consumers;
+import com.github.jinahya.util.function.Function;
+import com.github.jinahya.util.function.Functions;
+import com.github.jinahya.util.function.Predicate;
+import com.github.jinahya.util.function.Predicates;
 import javax.media.Player;
 import javax.tv.service.selection.ServiceContentHandler;
 import javax.tv.service.selection.ServiceContext;
 import javax.tv.service.selection.ServiceContextException;
 import javax.tv.service.selection.ServiceContextFactory;
-import static javax.tv.service.selection.ServiceContextFactory.getInstance;
 import javax.tv.xlet.XletContext;
 
 
@@ -37,109 +40,53 @@ import javax.tv.xlet.XletContext;
 public final class Players {
 
 
-    public static Collection<? super Player> collect(final ServiceContext context,
-                                                     final Collection<? super Player> collection, final int limit) {
+    /**
+     * Supplies the result of
+     * {@link ServiceContext#getServiceContenetHandlers()} invoke on specified
+     * {@code context} to specified {@code consumer}.
+     *
+     * @param <T>
+     * @param context
+     * @param predicate
+     * @param function
+     * @param consumer
+     */
+    public static <T> void supply(
+        final ServiceContext context, final Predicate<? super Player> predicate,
+        final Function<Player, T> function,
+        final Consumer<? super T> consumer) {
 
-        return ServiceMediaHandlers.collect(context, Player.class, collection, limit);
+        ServiceContentHandlers.supply(
+            context,
+            Predicates.checkingInstanceOf(Player.class),
+            Functions.<ServiceContentHandler, Player>casting(Player.class),
+            Consumers.of(predicate, function, consumer)
+        );
     }
 
 
-    /**
-     * Returns a list of {@link ServiceContentHandler} related to given
-     * {@code xletContext} which each is an instance of {@link Player}.
-     *
-     * @param context the xlet context
-     * @param collection the list which players are added and returned.
-     *
-     * @return a list of {@link ServiceContentHandler}s which each is an
-     * instance of {@link Player}.
-     *
-     * @throws ServiceContextException
-     * @see ServiceContextFactory#getServiceContext(javax.tv.xlet.XletContext)
-     * @see #list(javax.tv.service.selection.ServiceContext, java.util.List)
-     */
-    public static List<Player> list(final XletContext context,
-                                    final List<Player> collection)
+    public static <T> void supply(final XletContext context,
+                                  final Predicate<? super Player> predicate,
+                                  final Function<Player, T> function,
+                                  final Consumer<? super T> consumer)
         throws ServiceContextException {
 
-        if (context == null) {
-            throw new NullPointerException("null context");
-        }
-
-        return list(getInstance().getServiceContext(context), collection);
+        supply(ServiceContextFactory.getInstance().getServiceContext(context),
+               predicate, function, consumer);
     }
 
 
-    public static List<Player> list(final ServiceContext context,
-                                    final List<Player> players) {
-
-        if (context == null) {
-            throw new NullPointerException("null context");
-        }
-
-        if (players == null) {
-            throw new NullPointerException("null players");
-        }
-
-        for (final ServiceContentHandler handler
-             : context.getServiceContentHandlers()) {
-            if (handler instanceof Player) {
-                players.add((Player) handler);
-            }
-        }
-
-        return players;
-    }
-
-
-    /**
-     * Returns a list of {@link ServiceContentHandler} related to given
-     * {@code xletContext} which each is an instance of {@link Player}.
-     *
-     * @param context the xlet context
-     * @param collection the list which players are added and returned.
-     *
-     * @return a list of {@link ServiceContentHandler}s which each is an
-     * instance of {@link Player}.
-     *
-     * @throws ServiceContextException
-     * @see ServiceContextFactory#getServiceContext(javax.tv.xlet.XletContext)
-     * @see #list(javax.tv.service.selection.ServiceContext, java.util.List)
-     */
-    public static List<Player> list(final XletContext context,
-                                    final List<Player> collection)
-        throws ServiceContextException {
-
-        if (context == null) {
-            throw new NullPointerException("null context");
-        }
-
-        return list(getInstance().getServiceContext(context), collection);
-    }
-
-
-    /**
-     *
-     * @param factory
-     * @param players
-     *
-     * @return given {@code players}
-     *
-     * @see ServiceContextFactory#getServiceContexts()
-     * @see #list(javax.tv.service.selection.ServiceContext, java.util.List)
-     */
-    public static List<Player> list(final ServiceContextFactory factory,
-                                    final List<Player> players) {
-
+    public static <T> void supply(final ServiceContextFactory factory,
+                                  final Predicate<? super Player> predicate,
+                                  final Function<Player, T> function,
+                                  final Consumer<? super T> consumer) {
         if (factory == null) {
             throw new NullPointerException("null factory");
         }
 
         for (final ServiceContext context : factory.getServiceContexts()) {
-            list(context, players);
+            supply(context, predicate, function, consumer);
         }
-
-        return players;
     }
 
 

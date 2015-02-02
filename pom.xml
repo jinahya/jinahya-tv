@@ -25,7 +25,7 @@
       <groupId>com.github.jinahya</groupId>
       <artifactId>jinahya-pbp</artifactId>
       <version>0.1-SNAPSHOT</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.googlecode.jinahya</groupId>
@@ -163,9 +163,11 @@
                          classpathref="maven.plugin.classpath"/>
                 <retrotranslator srcdir="${project.build.outputDirectory}"
                                  destdir="${project.build.outputDirectory}"
-                                 target="1.3" smart="true" stripannot="true"
-                                 stripsign="true" failonwarning="true"
-                                 embed="com.github.jinahya.retrotranslator13">
+                                 embed="com.github.jinahya.tv.retrotranslator13"
+                                 failonwarning="true" smart="true"
+                                 stripannot="true" stripsign="true"
+                                 syncvolatile="true" target="1.3" verbose="true"
+                                 verify="false">
                   <classpath>
                     <fileset dir="${basedir}/lib" includes="**/*.jar"/>
                   </classpath>
@@ -184,6 +186,26 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>src-dependencies</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <classifier>sources</classifier>
+              <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+              <includeArtifactIds>jinahya-pbp</includeArtifactIds>
+              <outputDirectory>${project.build.directory}/dependency-sources</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.1</version>
         <configuration>
@@ -191,6 +213,39 @@
           <pushChanges>false</pushChanges>
           <localCheckout>true</localCheckout>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.9.1</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/dependency-sources</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

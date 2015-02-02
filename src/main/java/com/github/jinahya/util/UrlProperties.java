@@ -31,17 +31,20 @@ import java.util.Properties;
 public class UrlProperties extends Properties {
 
 
-    public void load(final URL[] urls) throws IOException {
+    private static final long serialVersionUID = 6794853027676078119L;
+
+
+    public void load(final URL... urls) throws IOException {
 
         if (urls == null) {
             throw new NullPointerException("null urls");
         }
 
-        for (int i = 0; i < urls.length; i++) {
-            if (urls[i] == null) {
-                //throw new IllegalArgumentException("urls[i] == null");
+        for (final URL url : urls) {
+            if (url == null) {
+                throw new NullPointerException("urls[i] == null");
             }
-            final InputStream stream = urls[i].openStream();
+            final InputStream stream = url.openStream();
             try {
                 load(stream);
             } finally {
@@ -61,6 +64,14 @@ public class UrlProperties extends Properties {
         throws IOException {
 
         load(new URL[]{firstUrl, secondUrl});
+    }
+
+
+    public void load(final URL firstUrl, final URL secondUrl,
+                     final URL thirdUrl)
+        throws IOException {
+
+        load(new URL[]{firstUrl, secondUrl, thirdUrl});
     }
 
 
