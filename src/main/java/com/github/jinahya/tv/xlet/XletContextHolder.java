@@ -53,16 +53,16 @@ import javax.tv.xlet.XletContext;
 public final class XletContextHolder {
 
 
-    private static volatile XletContext xletContext;
+    private static volatile XletContext HOLDEE;
 
 
     public synchronized static XletContext get() {
 
-        if (xletContext == null) {
+        if (HOLDEE == null) {
             throw new IllegalStateException("not set yet");
         }
 
-        return xletContext;
+        return HOLDEE;
     }
 
 
@@ -74,8 +74,8 @@ public final class XletContextHolder {
 
         if (xletContext == null) {
             synchronized (XletContextHolder.class) {
-                if (XletContextHolder.xletContext != null) {
-                    XletContextHolder.xletContext = null;
+                if (HOLDEE != null) {
+                    HOLDEE = null;
                     return;
                 }
             }
@@ -83,10 +83,10 @@ public final class XletContextHolder {
         }
 
         synchronized (XletContextHolder.class) {
-            if (XletContextHolder.xletContext != null) {
+            if (HOLDEE != null) {
                 throw new IllegalStateException("already set");
             }
-            XletContextHolder.xletContext = xletContext;
+            HOLDEE = xletContext;
         }
     }
 
