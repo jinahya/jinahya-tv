@@ -18,30 +18,37 @@
 package com.github.jinahya.tv.xlet;
 
 
+import com.github.jinahya.util.SynchronizedHolder;
 import javax.tv.xlet.XletContext;
 
 
 /**
+ * A utility class holding an {@link XletContext}.
  * <p>
  * <blockquote><pre>
  * {@code
  * public void initXlet(final XletContext xletContext) {
- *     XletContextHolder.set(xletContext);
+ *     XletContextHolder.getIntstance().set(xletContext);
  *     // other statements here
  * }
+ *
  * public void destroyXlet(final boolean unconditional) {
  *     // other statements here
- *     XletContextHolder.set(null);
+ *     XletContextHolder.getInstance().set(null);
  * }
  * }
  * </pre></blockquote>
  * </p>
+ * Not any codes executed between {@code initXlet} and {@code destroyXlet} can
+ * use it like this.
  * <p>
  * <blockquote><pre>
  * {@code
  * class SomeOther {
- *     public void doSomething() {
- *         final XletContext xletContext = XletContextHolder.get();
+ *     public void doSomethingWithXletContext() {
+ *         final XletContext xletContext
+ *             = XletContextHolder.getInstance().get();
+ *         // do something with xletContext
  *     }
  * }
  * }
@@ -50,50 +57,100 @@ import javax.tv.xlet.XletContext;
  *
  * @author Jin Kwon &ltjinahya at gmail.com&gt;
  */
-public final class XletContextHolder {
+public final class XletContextHolder extends SynchronizedHolder<XletContext> {
 
 
-    private static volatile XletContext HOLDEE;
+    private static final class InstanceHolder {
 
 
-    public synchronized static XletContext get() {
+        private static final XletContextHolder INSTANCE
+            = new XletContextHolder();
 
-        if (HOLDEE == null) {
-            throw new IllegalStateException("not set yet");
+
+        private InstanceHolder() {
+
+            super();
         }
 
-        return HOLDEE;
+
+    }
+
+
+    public static XletContextHolder getInstance() {
+
+        return InstanceHolder.INSTANCE;
     }
 
 
     /**
+     * Return the value which {@link #getInstance()} is holding. This method is
+     * identical to {@code getInstance().get()}.
      *
-     * @param xletContext the xlet context to be set
+     * @return the value.
+     *
+     * @see #getInstance()
+     * @see #get()
      */
-    public static void set(final XletContext xletContext) {
+    public static XletContext getXletContext() {
 
-        if (xletContext == null) {
-            synchronized (XletContextHolder.class) {
-                if (HOLDEE != null) {
-                    HOLDEE = null;
-                    return;
-                }
-            }
-            throw new NullPointerException("null xletContext");
-        }
+        return getInstance().get();
+    }
 
-        synchronized (XletContextHolder.class) {
-            if (HOLDEE != null) {
-                throw new IllegalStateException("already set");
-            }
-            HOLDEE = xletContext;
-        }
+
+    /**
+     * Replace the value which {@link #getInstance()} is holding. This method is
+     * identical to {@code getInstance().set(holdee)}.
+     *
+     * @param holdee
+     *
+     * @see #getInstance()
+     * @see #set(javax.tv.xlet.XletContext)
+     */
+    public static void setXletContext(final XletContext holdee) {
+
+        getInstance().set(holdee);
     }
 
 
     private XletContextHolder() {
 
         super();
+    }
+
+
+    @Override
+    public synchronized XletContext get() {
+
+        final XletContext holdee = super.get();
+        if (holdee == null) {
+            throw new IllegalStateException("no holdee");
+        }
+
+        return holdee;
+    }
+
+
+    /**
+     * Replaces the holding value with specified.
+     *
+     * @param holdee new value; {@code null} for clear.
+     */
+    @Override
+    public synchronized void set(final XletContext holdee) {
+
+        if (holdee == null) {
+            if (super.get() != null) {
+                set(holdee);
+                return;
+            }
+            throw new NullPointerException("null holdee");
+        }
+
+        if (super.get() != null) {
+            throw new IllegalStateException("already set");
+        }
+
+        super.set(holdee);
     }
 
 

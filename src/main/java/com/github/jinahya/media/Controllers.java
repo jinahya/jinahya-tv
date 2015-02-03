@@ -26,7 +26,7 @@ import javax.media.Controller;
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
-public class Controllers {
+public final class Controllers {
 
 
     /**

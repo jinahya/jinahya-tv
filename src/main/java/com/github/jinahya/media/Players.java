@@ -25,6 +25,7 @@ import com.github.jinahya.util.function.Function;
 import com.github.jinahya.util.function.Functions;
 import com.github.jinahya.util.function.Predicate;
 import com.github.jinahya.util.function.Predicates;
+import java.util.Collection;
 import javax.media.Player;
 import javax.tv.service.selection.ServiceContentHandler;
 import javax.tv.service.selection.ServiceContext;
@@ -42,19 +43,35 @@ public final class Players {
 
     /**
      * Supplies the result of
-     * {@link ServiceContext#getServiceContenetHandlers()} invoke on specified
+     * {@link ServiceContext#getServiceContenetHandlers()} invoked on specified
      * {@code context} to specified {@code consumer}.
      *
-     * @param <T>
-     * @param context
-     * @param predicate
-     * @param function
-     * @param consumer
+     * @param <T> result type parameter
+     * @param context the context
+     * @param predicate the predicate
+     * @param function the function
+     * @param consumer the consumer
      */
     public static <T> void supply(
         final ServiceContext context, final Predicate<? super Player> predicate,
         final Function<Player, T> function,
         final Consumer<? super T> consumer) {
+
+        if (context == null) {
+            throw new NullPointerException("null context");
+        }
+
+        if (predicate == null) {
+            throw new NullPointerException("null predicate");
+        }
+
+        if (function == null) {
+            throw new NullPointerException("null consumer");
+        }
+
+        if (consumer == null) {
+            throw new NullPointerException("null consumer");
+        }
 
         ServiceContentHandlers.supply(
             context,
@@ -62,6 +79,18 @@ public final class Players {
             Functions.<ServiceContentHandler, Player>casting(Player.class),
             Consumers.of(predicate, function, consumer)
         );
+    }
+
+
+    public static void collect(final ServiceContext context,
+                               final Collection<? super Player> collection) {
+
+        if (context == null) {
+            throw new NullPointerException("null context");
+        }
+
+        supply(context, Predicates.matches(), Functions.<Player>identity(),
+               Consumers.collecting(collection));
     }
 
 
@@ -76,10 +105,20 @@ public final class Players {
     }
 
 
+    public static void collect(final XletContext context,
+                               final Collection<? super Player> collection)
+        throws ServiceContextException {
+
+        supply(context, Predicates.matches(), Functions.<Player>identity(),
+               Consumers.collecting(collection));
+    }
+
+
     public static <T> void supply(final ServiceContextFactory factory,
                                   final Predicate<? super Player> predicate,
                                   final Function<Player, T> function,
                                   final Consumer<? super T> consumer) {
+
         if (factory == null) {
             throw new NullPointerException("null factory");
         }
@@ -87,6 +126,18 @@ public final class Players {
         for (final ServiceContext context : factory.getServiceContexts()) {
             supply(context, predicate, function, consumer);
         }
+    }
+
+
+    public static void collect(final ServiceContextFactory factory,
+                               final Collection<? super Player> collection) {
+
+        if (factory == null) {
+            throw new NullPointerException("null factory");
+        }
+
+        supply(factory, Predicates.matches(), Functions.<Player>identity(),
+               Consumers.collecting(collection));
     }
 
 

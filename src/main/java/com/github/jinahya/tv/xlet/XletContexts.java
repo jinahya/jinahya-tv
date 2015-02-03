@@ -19,6 +19,7 @@ package com.github.jinahya.tv.xlet;
 
 
 /**
+ * A utility class for {@link javax.tv.xlet.XletContext}.
  *
  * @author Jin Kwon &ltjinahya at gmail.com&gt;
  */

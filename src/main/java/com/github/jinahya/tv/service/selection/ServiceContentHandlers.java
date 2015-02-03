@@ -44,9 +44,10 @@ public final class ServiceContentHandlers {
 
         for (final ServiceContentHandler handler
              : context.getServiceContentHandlers()) {
-            if (predicate.test(handler)) {
-                consumer.accept(function.apply(handler));
+            if (!predicate.test(handler)) {
+                continue;
             }
+            consumer.accept(function.apply(handler));
         }
     }
 
