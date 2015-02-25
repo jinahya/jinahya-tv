@@ -92,10 +92,10 @@
 <th><img src="images/icon_warning_sml.gif" alt="" />&#160;Warnings</th>
 <th><img src="images/icon_error_sml.gif" alt="" />&#160;Errors</th></tr>
 <tr class="b">
-<td>8</td>
+<td>9</td>
 <td>0</td>
 <td>0</td>
-<td>33</td></tr></table></div>
+<td>39</td></tr></table></div>
 <div class="section">
 <h2>Files<a name="Files"></a></h2>
 <table border="0" class="bodyTable">
@@ -135,11 +135,16 @@
 <td>0</td>
 <td>3</td></tr>
 <tr class="b">
+<td><a href="#com.github.jinahya.tv.xlet.AbstractXlet.java">com/github/jinahya/tv/xlet/AbstractXlet.java</a></td>
+<td>0</td>
+<td>0</td>
+<td>3</td></tr>
+<tr class="a">
 <td><a href="#com.github.jinahya.tv.xlet.XletContextHolder.java">com/github/jinahya/tv/xlet/XletContextHolder.java</a></td>
 <td>0</td>
 <td>0</td>
-<td>6</td></tr>
-<tr class="a">
+<td>9</td></tr>
+<tr class="b">
 <td><a href="#com.github.jinahya.tv.xlet.XletContexts.java">com/github/jinahya/tv/xlet/XletContexts.java</a></td>
 <td>0</td>
 <td>0</td>
@@ -147,20 +152,25 @@
 <div class="section">
 <h2>Rules<a name="Rules"></a></h2>
 <table border="0" class="bodyTable">
-<tr class="b">
+<tr class="a">
 <th>Category</th>
 <th>Rule</th>
 <th>Violations</th>
 <th>Severity</th></tr>
-<tr class="a">
+<tr class="b">
 <td>design</td>
+<td><a class="externalLink" href="http://checkstyle.sourceforge.net/config_design.html#DesignForExtension">DesignForExtension</a></td>
+<td>2</td>
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td></tr>
+<tr class="a">
+<td></td>
 <td><a class="externalLink" href="http://checkstyle.sourceforge.net/config_design.html#FinalClass">FinalClass</a></td>
-<td>3</td>
+<td>4</td>
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td></tr>
 <tr class="b">
 <td>javadoc</td>
 <td><a class="externalLink" href="http://checkstyle.sourceforge.net/config_javadoc.html#JavadocMethod">JavadocMethod</a></td>
-<td>23</td>
+<td>24</td>
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td></tr>
 <tr class="a">
 <td></td>
@@ -177,6 +187,16 @@
 <tr class="a">
 <td></td>
 <td><a class="externalLink" href="http://checkstyle.sourceforge.net/config_javadoc.html#JavadocVariable">JavadocVariable</a></td>
+<td>1</td>
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td></tr>
+<tr class="b">
+<td>misc</td>
+<td><a class="externalLink" href="http://checkstyle.sourceforge.net/config_misc.html#FinalParameters">FinalParameters</a></td>
+<td>1</td>
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td></tr>
+<tr class="a">
+<td>sizes</td>
+<td><a class="externalLink" href="http://checkstyle.sourceforge.net/config_sizes.html#LineLength">LineLength</a></td>
 <td>1</td>
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td></tr></table></div>
 <div class="section">
@@ -386,6 +406,33 @@
 <td>Missing a Javadoc comment.</td>
 <td><a href="./xref/com/github/jinahya/tv/service/selection/ServiceContentHandlers.html#L55">55</a></td></tr></table></div>
 <div class="section">
+<h3 id="com.github.jinahya.tv.xlet.AbstractXlet.java">com/github/jinahya/tv/xlet/AbstractXlet.java</h3>
+<table border="0" class="bodyTable">
+<tr class="a">
+<th>Severity</th>
+<th>Category</th>
+<th>Rule</th>
+<th>Message</th>
+<th>Line</th></tr>
+<tr class="b">
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
+<td>design</td>
+<td>DesignForExtension</td>
+<td>Method 'initXlet' is not designed for extension - needs to be abstract, final or empty.</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/AbstractXlet.html#L33">33</a></td></tr>
+<tr class="a">
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
+<td>design</td>
+<td>DesignForExtension</td>
+<td>Method 'destroyXlet' is not designed for extension - needs to be abstract, final or empty.</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/AbstractXlet.html#L53">53</a></td></tr>
+<tr class="b">
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
+<td>misc</td>
+<td>FinalParameters</td>
+<td>Parameter unconditional should be final.</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/AbstractXlet.html#L54">54</a></td></tr></table></div>
+<div class="section">
 <h3 id="com.github.jinahya.tv.xlet.XletContextHolder.java">com/github/jinahya/tv/xlet/XletContextHolder.java</h3>
 <table border="0" class="bodyTable">
 <tr class="a">
@@ -396,56 +443,74 @@
 <th>Line</th></tr>
 <tr class="b">
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
+<td>design</td>
+<td>FinalClass</td>
+<td>Class XletContextHolder should be declared as final.</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L65">65</a></td></tr>
+<tr class="a">
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
 <td>javadoc</td>
 <td>JavadocType</td>
 <td>Missing a Javadoc comment.</td>
-<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L63">63</a></td></tr>
-<tr class="a">
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L68">68</a></td></tr>
+<tr class="b">
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
 <td>javadoc</td>
 <td>JavadocVariable</td>
 <td>Missing a Javadoc comment.</td>
-<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L66">66</a></td></tr>
-<tr class="b">
-<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
-<td>javadoc</td>
-<td>JavadocMethod</td>
-<td>Missing a Javadoc comment.</td>
-<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L70">70</a></td></tr>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L71">71</a></td></tr>
 <tr class="a">
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
 <td>javadoc</td>
 <td>JavadocMethod</td>
 <td>Missing a Javadoc comment.</td>
-<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L79">79</a></td></tr>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L75">75</a></td></tr>
 <tr class="b">
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
 <td>javadoc</td>
 <td>JavadocMethod</td>
-<td>Expected @param tag for 'holdee'.</td>
-<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L109">109</a></td></tr>
+<td>Expected @param tag for 'value'.</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L120">120</a></td></tr>
+<tr class="a">
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
+<td>sizes</td>
+<td>LineLength</td>
+<td>Line is longer than 80 characters (found 81).</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L200">200</a></td></tr>
+<tr class="b">
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
+<td>javadoc</td>
+<td>JavadocMethod</td>
+<td>Expected @throws tag for 'ServiceContextException'.</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L214">214</a></td></tr>
 <tr class="a">
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
 <td>javadoc</td>
 <td>JavadocMethod</td>
+<td>Expected @throws tag for 'ServiceContextException'.</td>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L228">228</a></td></tr>
+<tr class="b">
+<td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
+<td>javadoc</td>
+<td>JavadocMethod</td>
 <td>Missing a Javadoc comment.</td>
-<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L115">115</a></td></tr></table></div>
+<td><a href="./xref/com/github/jinahya/tv/xlet/XletContextHolder.html#L251">251</a></td></tr></table></div>
 <div class="section">
 <h3 id="com.github.jinahya.tv.xlet.XletContexts.java">com/github/jinahya/tv/xlet/XletContexts.java</h3>
 <table border="0" class="bodyTable">
-<tr class="b">
+<tr class="a">
 <th>Severity</th>
 <th>Category</th>
 <th>Rule</th>
 <th>Message</th>
 <th>Line</th></tr>
-<tr class="a">
+<tr class="b">
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
 <td>javadoc</td>
 <td>JavadocPackage</td>
 <td>Missing package-info.java file.</td>
 <td></td></tr>
-<tr class="b">
+<tr class="a">
 <td><img src="images/icon_error_sml.gif" alt="" />&#160;Error</td>
 <td>javadoc</td>
 <td>JavadocMethod</td>
