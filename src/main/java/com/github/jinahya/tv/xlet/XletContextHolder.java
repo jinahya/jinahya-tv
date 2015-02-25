@@ -18,7 +18,12 @@
 package com.github.jinahya.tv.xlet;
 
 
-import com.github.jinahya.util.SynchronizedHolder;
+import com.github.jinahya.util.AtomicHolder;
+import java.awt.Container;
+import javax.tv.graphics.TVContainer;
+import javax.tv.service.selection.ServiceContext;
+import javax.tv.service.selection.ServiceContextException;
+import javax.tv.service.selection.ServiceContextFactory;
 import javax.tv.xlet.XletContext;
 
 
@@ -47,7 +52,7 @@ import javax.tv.xlet.XletContext;
  * class SomeOther {
  *     public void doSomethingWithXletContext() {
  *         final XletContext xletContext
- *             = XletContextHolder.getInstance().get();
+ *             = (XletContext) XletContextHolder.getInstance().get();
  *         // do something with xletContext
  *     }
  * }
@@ -57,7 +62,7 @@ import javax.tv.xlet.XletContext;
  *
  * @author Jin Kwon &ltjinahya at gmail.com&gt;
  */
-public final class XletContextHolder extends SynchronizedHolder<XletContext> {
+public class XletContextHolder extends AtomicHolder<XletContext> {
 
 
     private static final class InstanceHolder {
@@ -76,6 +81,12 @@ public final class XletContextHolder extends SynchronizedHolder<XletContext> {
     }
 
 
+    /**
+     * Returns the single instance of this holder. The {@code XletContextHolder}
+     * is a singleton.
+     *
+     * @return the instance.
+     */
     public static XletContextHolder getInstance() {
 
         return InstanceHolder.INSTANCE;
@@ -101,56 +112,145 @@ public final class XletContextHolder extends SynchronizedHolder<XletContext> {
      * Replace the value which {@link #getInstance()} is holding. This method is
      * identical to {@code getInstance().set(holdee)}.
      *
-     * @param holdee
+     * @param value
      *
      * @see #getInstance()
      * @see #set(javax.tv.xlet.XletContext)
      */
-    public static void setXletContext(final XletContext holdee) {
+    public static void setXletContext(final XletContext value) {
 
-        getInstance().set(holdee);
+        getInstance().set(value);
+    }
+
+
+    /**
+     * Returns the result of
+     * {@link XletContext#getXletProperty(java.lang.String)} invoked with
+     * specified {@code key} on the {@code XletContext} that this holder is
+     * currently holding.
+     *
+     * @param key the key
+     *
+     * @return the value.
+     *
+     * @see #getXletContext()
+     * @see XletContext#getXletProperty(java.lang.String)
+     */
+    public static Object getXletProperty(final String key) {
+
+        return getXletContext().getXletProperty(key);
+    }
+
+
+    /**
+     * Returns the Xlet property value mapped to {@link XletContext#ARGS}.
+     *
+     * @return the initialization arguments as an array of {@code String}.
+     *
+     * @see XletContext#ARGS
+     * @see #getXletProperty(java.lang.String)
+     */
+    public static String[] getInitializationArguments() {
+
+        return (String[]) getXletProperty(XletContext.ARGS);
+    }
+
+
+    /**
+     * Invokes {@link XletContext#notifyDestroyed()} on the {@code XletContext}
+     * instance that this holder is currently holding.
+     *
+     * @see #getXletContext()
+     * @see XletContext#notifyDestroyed()
+     */
+    public static void notifyDestroyed() {
+
+        getXletContext().notifyDestroyed();
+    }
+
+
+    /**
+     * Invokes {@link XletContext#notifyPaused()} on the {@code XletContext}
+     * instance that this holder is currently holding.
+     *
+     * @see #getXletContext()
+     * @see XletContext#notifyPaused()
+     */
+    public static void notifyPaused() {
+
+        getXletContext().notifyPaused();
+    }
+
+
+    /**
+     * Invokes {@link XletContext#resumeRequest()} on the {@code XletContext}
+     * that this holder is currently holding.
+     *
+     * @see #getXletContext()
+     * @see XletContext#resumeRequest()
+     */
+    public static void resumeRequest() {
+
+        getXletContext().resumeRequest();
+    }
+
+
+    /**
+     * Returns the result of
+     * {@link ServiceContextFactory#getServiceContext(javax.tv.xlet.XletContext)}
+     * invoked on specified {@code serviceContextFactory} with the
+     * {@code XletContext} instance that this holder is currently holding.
+     *
+     * @param serviceContextFactory the service context factory.
+     *
+     * @return the service context.
+     *
+     * @throws ServiceContextException
+     *
+     * @see ServiceContextFactory#getServiceContext(javax.tv.xlet.XletContext)
+     */
+    public static ServiceContext getServiceContext(
+        final ServiceContextFactory serviceContextFactory)
+        throws ServiceContextException {
+
+        return serviceContextFactory.getServiceContext(getXletContext());
+    }
+
+
+    /**
+     *
+     * @return @throws ServiceContextException
+     *
+     * @see ServiceContextFactory#getInstance()
+     * @see #getServiceContext(javax.tv.service.selection.ServiceContextFactory)
+     */
+    public static ServiceContext getServiceContext()
+        throws ServiceContextException {
+
+        return getServiceContext(ServiceContextFactory.getInstance());
+    }
+
+
+    /**
+     * Returns the result of
+     * {@link TVContainer#getRootContainer(javax.tv.xlet.XletContext)} invoked
+     * with the {@code XletContext} instance that this holder is currently
+     * holding.
+     *
+     * @return the result.
+     *
+     * @see #getXletContext()
+     * @see TVContainer#getRootContainer(javax.tv.xlet.XletContext)
+     */
+    public static Container getRootContainer() {
+
+        return TVContainer.getRootContainer(getXletContext());
     }
 
 
     private XletContextHolder() {
 
-        super();
-    }
-
-
-    @Override
-    public synchronized XletContext get() {
-
-        final XletContext holdee = super.get();
-        if (holdee == null) {
-            throw new IllegalStateException("no holdee");
-        }
-
-        return holdee;
-    }
-
-
-    /**
-     * Replaces the holding value with specified.
-     *
-     * @param holdee new value; {@code null} for clear.
-     */
-    @Override
-    public synchronized void set(final XletContext holdee) {
-
-        if (holdee == null) {
-            if (super.get() != null) {
-                set(holdee);
-                return;
-            }
-            throw new NullPointerException("null holdee");
-        }
-
-        if (super.get() != null) {
-            throw new IllegalStateException("already set");
-        }
-
-        super.set(holdee);
+        super(null);
     }
 
 
